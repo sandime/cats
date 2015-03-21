@@ -17,13 +17,24 @@
 
  <!-- angular compiles html, discovers the toDoCtrl controller then invokes this function-->
         var todoApp = angular.module ("todoApp", []);
+<!-- better filter-->
+        todoApp.filter("checkedItems", function () {
+            return function (items, showComplete) {
+                var resultArr = [];
+                angular.forEach(items, function (item) {
+                    if (item.done == false || showComplete == true) {
+                        resultArr.push(item);
+                    } });
+                return resultArr;
+            }
+        });
+
+        <!--  end better filter-->
+
         todoApp.controller("toDoCtrl", function ($scope)
-
-
         {
             $scope.todo = model;
 
- <!--adding functionality to display what's done -->
  <!--adding functionality to display what's done -->
             $scope.incompleteCount = function() {
                 var count = 0;
@@ -81,13 +92,19 @@
         </thead>
         <tbody>
     <!-- when you click the checkbox it changes to true or false -->
-        <tr ng-repeat = "item in todo.items | filter:{done: false} | orderBy:'action'"> <!-- adding a filter -->
-            <td> {{item.action}}</td>
+    <!--<tr ng-repeat = "item in todo.items | filter:{done: false} | orderBy:'action'"> -->
+    <!-- custom filter -->
+    <tr ng-repeat = "item in todo.items | checkedItems:showComplete | orderBy:'action'">
+        <td> {{item.action}}</td>
             <td><input type ="checkbox" ng-model = "item.done"/></td>
             <td> {{item.done}}</td>
         </tr>
         </tbody>
     </table>
+    <!-- adding for filter functionality to show how many todos are completed -->
+    <div class="checkbox-inline">
+        <label><input type="checkbox" ng_model="showComplete"> Show Complete</label>
+</div>
 </div>
 </body>
 </html>
